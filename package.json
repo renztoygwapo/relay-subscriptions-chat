@@ -1,7 +1,7 @@
 {
   "name": "relay-subscriptions-chat",
   "version": "0.0.1",
-  "main": "build/server.js",
+  "main": "build/server/index.js",
   "license": "SEE LICENSE IN <filename>",
   "scripts": {
     "build": "npm run build:relay && npm run build:client && npm run build:server",
