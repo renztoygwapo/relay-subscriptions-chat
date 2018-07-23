@@ -1,5 +1,9 @@
 const name = 'relay-subscriptions-chat';
 
+// name -> https://${name} (see nginx.conf)
+// name -> mongodb://localhost:27017/${name}
+// name -> index.html -> title
+
 module.exports = {
 
 	name,

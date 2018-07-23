@@ -1,9 +1,5 @@
 // @flow
 
-const sessionUrl = () =>
-	'https://relay-subscriptions-chat';
-
-const url = sessionUrl ();
 
 const handler = (res) =>
 	res
@@ -15,7 +11,7 @@ const handler = (res) =>
 		);
 
 export const login = (data: Object) =>
-	fetch (`${url}/session`, {
+	fetch ('/session', {
 		method: 'POST',
 		mode: 'cors',
 		credentials: 'include',
@@ -27,7 +23,7 @@ export const login = (data: Object) =>
 	.then (handler);
 
 export const logout = () =>
-	fetch (`${url}/session`, {
+	fetch ('/session', {
 		method: 'DELETE',
 		mode: 'cors',
 		credentials: 'include',
@@ -37,7 +33,7 @@ export const logout = () =>
 	});
 
 export const getSession = () =>
-	fetch (`${url}/session`, {
+	fetch ('/session', {
 		mode: 'cors',
 		credentials: 'include',
 		headers: {

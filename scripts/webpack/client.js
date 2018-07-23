@@ -8,7 +8,7 @@ const MiniCssExtractPlugin = require ('mini-css-extract-plugin');
 const config = require ('config');
 const projectRoot = path.resolve (__dirname, '../../');
 
-const {PRODUCTION} = config;
+const {PRODUCTION, name: appName} = config;
 const SRC_PATH = path.resolve (projectRoot, 'src');
 const BUILD_PATH = path.resolve (projectRoot, 'build/client');
 const MODULES_PATH = path.resolve (projectRoot, 'node_modules');
@@ -131,7 +131,7 @@ module.exports = {
 
 	devServer: {
 		https: true,
-		public: 'relay-subscriptions-chat',
+		public: appName,
 		port: config.devPort,
 		contentBase: BUILD_PATH,
 		historyApiFallback: true,

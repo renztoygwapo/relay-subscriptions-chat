@@ -2,13 +2,19 @@
 
 import config from 'config';
 
-const {PRODUCTION}: {PRODUCTION: boolean} = config;
+const {
+	name,
+	PRODUCTION
+}: {
+	name: string,
+	PRODUCTION: boolean
+} = config;
 
 export default () =>
 `<!doctype html>
 <html>
 	<head>
-		<title>relay-subscriptions-chat</title>
+		<title>${name}</title>
 		<meta charset="utf-8">
 		<meta name="HandheldFriendly" content="True"/>
 		<meta name="apple-mobile-web-app-status-bar-style" content="white-translucent"/>
