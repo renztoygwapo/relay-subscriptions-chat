@@ -2,12 +2,14 @@
 
 import mongoose from 'mongoose';
 
+
 import type {MongooseDocument} from 'mongoose';
 
 export type UserMongooseDoc = MongooseDocument & {
 	name: string,
 	online: boolean
 };
+
 
 const {Schema} = mongoose;
 

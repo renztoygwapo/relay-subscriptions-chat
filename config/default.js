@@ -1,24 +1,25 @@
 const name = 'relay-subscriptions-chat';
 
-// name -> https://${name} (see nginx.conf)
-// name -> mongodb://localhost:27017/${name}
-// name -> index.html -> title
+/* eslint-disable no-process-env */
+const port = process.env.PORT || 8180;
+const connstr = process.env.MONGODB_URI || 'mongodb://localhost:27017/' + name;
+/* eslint-enable no-process-env */
 
 module.exports = {
 
 	name,
-	port: 8180,
+	port,
 
 	devPort: 8190,
 
 	contentBase: '../',
 
 	mongodb: {
-		connstr: 'mongodb://localhost:27017/' + name,
+		connstr,
 
 		options: {
 			autoReconnect: true,
-			reconnectInterval: 1000,
+			reconnectInterval: 5000,
 			useNewUrlParser: true
 		}
 	}

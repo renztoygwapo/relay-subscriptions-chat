@@ -2,12 +2,14 @@
 
 import mongoose from 'mongoose';
 
+
 import type {MongoId, MongooseDocument} from 'mongoose';
 
 export type MessageMongooseDoc = MongooseDocument & {
     userId: MongoId,
     text: string
 };
+
 
 const {Schema} = mongoose;
 const ObjectId = Schema.Types.ObjectId;

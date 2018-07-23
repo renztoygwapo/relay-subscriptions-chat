@@ -19,7 +19,7 @@
 	        "browsers": ["last 2 versions"]
 	      }
 	    }],
-		"stage-1",
+		"stage-2",
 		"react"
 	]
 }
