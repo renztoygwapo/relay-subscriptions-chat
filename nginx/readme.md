@@ -20,3 +20,6 @@
 * add this line to /etc/hosts
 
 	`127.0.0.1 relay-subscriptions-chat`
+
+
+NOTE: to change `mode` comment / uncomment `PRODUCTION` / `DEVELOPMENT` blocks
