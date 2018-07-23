@@ -1,5 +1,6 @@
 // @flow
 
+import 'babel-polyfill';
 import 'isomorphic-fetch';
 
 import path from 'path';
@@ -20,7 +21,7 @@ import connectDb from 'server/db';
 import {schema, rootValue} from 'server/schema';
 import appSession, {passportMiddleware} from 'server/session';
 
-import subscriptionsServer from 'server/ws';
+import wsServer from 'server/ws';
 
 const {
     name,
@@ -51,7 +52,7 @@ const graphqlServer = graphqlHTTP ({
         store: new MongoStore ({mongooseConnection})
     });
 
-    const server = app
+    const expressServer = app
         .use (cors)
         .use (compression ())
 
@@ -73,9 +74,10 @@ const graphqlServer = graphqlHTTP ({
             console.log (`* ${name} express server started on port ${port}`);
             console.log (`* ${name} mongoose connected to ${mongooseConnection.port}/${mongooseConnection.name}`);
             console.log (`* ${name} graphql server running on ${port}/graphql`);
+            console.log (`* ${name} subscriptions server running on ${port}${subscriptionsServer.server.path ()}`);
         });
 
-    subscriptionsServer (server, sessionMiddleware);
+    const subscriptionsServer = wsServer (expressServer, sessionMiddleware);
 
 }) (express ());
 
