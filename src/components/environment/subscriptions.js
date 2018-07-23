@@ -157,7 +157,7 @@ export default class Subscriptions {
 	}
 
 	resubscribe () {
-		for (let [, data] of this.subscriptions) {
+		for (let [, {data}] of this.subscriptions) {
 			this.websocket.send ({type: 'SUBSCRIBE', data});
 		}
 	}
