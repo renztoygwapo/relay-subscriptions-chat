@@ -36,17 +36,17 @@ type SubscriptionData = {
 	subscriptionId: SubscriptionId
 };
 
-type SubscribeMessageData = {
-	type: string,
-	data: SubscriptionData
-};
-
-type ServerResponseMessage = {
+type ServerResponse = {
 	subscriptionId: string,
 	data: Object
 };
 
-type SubscriptionsMap = Map <SubscriptionId, Observer <*>>;
+type SubscriptionEntry = {
+	data: SubscriptionData,
+	observer: Observer <*>
+};
+
+type SubscriptionsMap = Map <SubscriptionId, SubscriptionEntry>;
 
 
 const OPTIONS = {
@@ -59,12 +59,14 @@ export default class Subscriptions {
 
 	websocket: Socket;
 	webSocketSettings: WebSocketSettings;
+	reconnecting: boolean;
 
 	subscriptions: SubscriptionsMap;
 	subscriptionEnvironment: Environment;
 
 
 	constructor () {
+		this.reconnecting = false;
 		this.subscriptions = new Map ();
 		this.webSocketSettings = OPTIONS;
 
@@ -78,21 +80,33 @@ export default class Subscriptions {
 	}
 
 	ensureConnection () {
-		if (!this.websocket) {
-			this.websocket = io ('/', this.webSocketSettings);
-			this.websocket.on ('message', this.receivePayload);
-			this.websocket.on ('connect', () =>
-				console.log ('* subscriptions connected')
-			);
+		if (this.websocket) {
+			return;
 		}
+
+		this.websocket = io ('/', this.webSocketSettings);
+		this.websocket.on ('message', this.receivePayload);
+
+		this.websocket.on ('disconnect', () => {
+			this.reconnecting = true;
+		});
+
+		this.websocket.on ('connect', () => {
+			console.log ('* subscriptions connected');
+
+			if (this.reconnecting) {
+				this.resubscribe ();
+				this.reconnecting = false;
+			}
+		});
 	}
 
 	getClientId () {
 		return this.websocket ? this.websocket.id : null;
 	}
 
-	receivePayload ({data, subscriptionId}: ServerResponseMessage) {
-		const observer = this.subscriptions.get (subscriptionId);
+	receivePayload ({data, subscriptionId}: ServerResponse) {
+		const {observer} = this.subscriptions.get (subscriptionId) || {};
 
 		if (observer && observer.onNext) {
 			observer.onNext (data);
@@ -131,18 +145,20 @@ export default class Subscriptions {
 		const {name: subscriptionName} = config;
 		const subscriptionId = uuid.v4 ();
 
-		this.subscriptions.set (subscriptionId, observer);
-
-		const subscriptionData: SubscribeMessageData = {
-			type: 'SUBSCRIBE',
-			data: {
-				query,
-				variables,
-				subscriptionId,
-				subscriptionName
-			}
+		const data: SubscriptionData = {
+			query,
+			variables,
+			subscriptionId,
+			subscriptionName
 		};
 
-		this.websocket.send (subscriptionData);
+		this.websocket.send ({type: 'SUBSCRIBE', data});
+		this.subscriptions.set (subscriptionId, {observer, data});
+	}
+
+	resubscribe () {
+		for (let [, data] of this.subscriptions) {
+			this.websocket.send ({type: 'SUBSCRIBE', data});
+		}
 	}
 }
