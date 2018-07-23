@@ -1,0 +1,177 @@
+interface Node {
+	id: ID!
+}
+
+type StatsUsers {
+	online: Int!
+	total: Int!
+}
+
+type StatsMessages {
+	total: Int!
+}
+
+type Stats {
+	id: ID!
+	users: StatsUsers
+	messages: StatsMessages
+}
+
+type PageInfo {
+	hasNextPage: Boolean!
+	hasPreviousPage: Boolean!
+	startCursor: String
+	endCursor: String
+}
+
+type Message implements Node {
+	id: ID!
+	text: String!
+	user: User!
+	created: String
+}
+
+type MessagesEdge {
+	node: Message!
+	cursor: String!
+}
+
+type MessagesConnection {
+	pageInfo: PageInfo!
+	edges: [MessagesEdge!]!
+}
+
+
+type User implements Node {
+	id: ID!
+	name: String!
+
+	messages(
+		after: String,
+		first: Int,
+		before: String,
+		last: Int
+	): MessagesConnection!
+
+	totalMessages: Int!
+	online: Boolean
+}
+
+type UsersEdge {
+	node: User!
+	cursor: String!
+}
+
+type UsersConnection {
+	pageInfo: PageInfo!
+	edges: [UsersEdge!]!
+}
+
+# MUTATIONS
+
+input MessageAddInput {
+	clientMutationId: String
+	text: String!
+}
+type MessageAddPayload {
+	clientMutationId: String!
+	addedMessageEdge: MessagesEdge!
+	stats: Stats!
+	user: User!
+}
+
+input MessageRemoveInput {
+	clientMutationId: String!
+	messageId: ID!
+}
+type MessageRemovePayload {
+	clientMutationId: String!
+	removedMessageId: ID!
+	stats: Stats!
+	user: User!
+}
+
+input MessageUpdateInput {
+	clientMutationId: String!
+	messageId: ID!
+	text: String!
+}
+type MessageUpdatePayload {
+	clientMutationId: String!
+	message: Message!
+}
+
+
+type RootMutation {
+	messageAdd(input: MessageAddInput!): MessageAddPayload
+	messageRemove(input: MessageRemoveInput!): MessageRemovePayload
+	messageUpdate(input: MessageUpdateInput!): MessageUpdatePayload
+}
+
+
+# SUBSCRIPTIONS
+
+type UserAddSubscriptionPayload {
+	addedUserEdge: UsersEdge!
+	stats: Stats!
+}
+
+type UserUpdatedSubscriptionPayload {
+	user: User!
+}
+
+
+type MessageAddSubscriptionPayload {
+	addedMessageEdge: MessagesEdge!
+	stats: Stats!
+	user: User!
+}
+
+type MessageRemoveSubscriptionPayload {
+	removedMessageId: ID!
+	stats: Stats!
+	user: User!
+}
+
+type MessageUpdatedSubscriptionPayload {
+	message: Message!
+}
+
+
+type RootSubscription {
+	userAdded: UserAddSubscriptionPayload
+	userUpdated: UserUpdatedSubscriptionPayload
+	messageAdded: MessageAddSubscriptionPayload
+	messageRemoved: MessageRemoveSubscriptionPayload
+	messageUpdated: MessageUpdatedSubscriptionPayload
+}
+
+
+type RootQuery {
+
+	node(id: ID!): Node
+	me: User
+
+	stats: Stats!
+
+	users(
+		after: String,
+		first: Int,
+		before: String,
+		last: Int
+	): UsersConnection!
+
+	messages(
+		after: String,
+		first: Int,
+		before: String,
+		last: Int
+	): MessagesConnection!
+}
+
+schema {
+	query: RootQuery
+	mutation: RootMutation,
+	subscription: RootSubscription
+}
+

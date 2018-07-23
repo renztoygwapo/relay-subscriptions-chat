@@ -1,0 +1,25 @@
+{
+	"plugins": [
+		["module-resolver", {
+      		"root": ["./src"]
+    	}],
+    	"babel-plugin-inline-import",
+		["relay", {
+			"schema": "data/schema.graphql"
+		}],
+		["transform-runtime", {
+			"polyfill": false,
+			"regenerator": false
+		}]
+	],
+	"presets": [
+	    ["env", {
+	      "targets": {
+	      	"node": "8.1",
+	        "browsers": ["last 2 versions"]
+	      }
+	    }],
+		"stage-1",
+		"react"
+	]
+}

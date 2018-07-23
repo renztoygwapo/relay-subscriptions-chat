@@ -1,0 +1,33 @@
+.app-header {
+	margin:0;
+	font-size:1.5em;
+	padding:15px;
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+	.user{
+		.status {
+			display: none;
+		}
+
+		.stats {
+			&:before{
+				content:"[";
+			}
+			&:after{
+				content:"]";
+			}
+		}
+	}
+
+	.logout{
+		color:inherit !important;
+		margin-left:.5em;
+		opacity:.2;
+
+		&:hover{
+			opacity:.9;
+		}
+	}
+}
