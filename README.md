@@ -1,9 +1,9 @@
 # relay-subscriptions-chat
 
-ReactRelay / GraphQL Subscriptions / SocketIO / Express
+Example ReactRelay / GraphQL Subscriptions / SocketIO / Express
 
-* Relay Mutations: RANGE_ADD, RANGE_DELETE, NODE_DELETE
-* Relay Subscriptions: mutation reflect / server event
+* ReactRelay Mutations: RANGE_ADD, RANGE_DELETE, NODE_DELETE
+* ReactRelay Subscriptions: mutation reflect / server event
 
 ### install
 
