@@ -40,9 +40,8 @@ const getQueryData = ({query, variables, resolvers, context}) =>
 	graphql (schema, query, {...rootValue, ...resolvers}, context, variables);
 
 const createCallback = (
-	id: SubscriptionId,
-	client: Client,
 	subscriptions: SubscriptionsMap,
+	id: SubscriptionId
 ) => async ({resolvers, context}: PublishData) => {
 		const entry = subscriptions.get (id);
 
@@ -76,14 +75,21 @@ export default class SubscriptionsStore {
 
 	registerSubscription (client: Client, data: SubscriptionData) {
 		const {subscriptionName, subscriptionId: id} = data;
-		const entry = this.subscriptions.get (id) || {
-			data,
-			client,
-			callback: createCallback (id, client, this.subscriptions)
-		};
+		let entry = this.subscriptions.get (id);
+
+		if (!entry) {
+			entry = {
+				data,
+				client,
+				callback: createCallback (this.subscriptions, id)
+			};
+
+			this.pubsub.subscribe (subscriptionName, entry.callback);
+		} else {
+			entry.client = client;
+		}
 
 		this.subscriptions.set (id, entry);
-		this.pubsub.subscribe (subscriptionName, entry.callback);
 
 		console.log (`* registered subscription ${id}@${subscriptionName}`)
 	}
