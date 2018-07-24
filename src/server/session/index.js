@@ -27,7 +27,7 @@ export default express.Router ()
 		} else {
 			res.status (401).json ({
 				error: '401',
-				message: 'Authentication required'
+				message: 'authentication required'
 			});
 		}
 	})

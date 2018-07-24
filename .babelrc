@@ -3,13 +3,13 @@
 		["module-resolver", {
       		"root": ["./src"]
     	}],
+		["transform-runtime", {
+			"polyfill": false,
+			"regenerator": true
+		}],
     	"babel-plugin-inline-import",
 		["relay", {
 			"schema": "data/schema.graphql"
-		}],
-		["transform-runtime", {
-			"polyfill": false,
-			"regenerator": false
 		}]
 	],
 	"presets": [

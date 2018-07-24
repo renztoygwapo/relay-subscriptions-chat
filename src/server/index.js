@@ -1,6 +1,6 @@
 // @flow
 
-import 'babel-polyfill';
+import 'regenerator-runtime/runtime';
 import 'isomorphic-fetch';
 
 import path from 'path';
