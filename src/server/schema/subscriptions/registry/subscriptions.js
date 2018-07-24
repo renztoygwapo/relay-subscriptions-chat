@@ -12,7 +12,7 @@ import type {Client} from 'server/ws/socket/authenticated';
 import type {
 	SubscriptionId,
 	SubscriptionData
-} from 'server/schema/subscriptions'
+} from 'server/schema/subscriptions';
 
 type SubscriptionEntry = {
 	client: Client,

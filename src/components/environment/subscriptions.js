@@ -72,11 +72,15 @@ export default class Subscriptions {
 
 		(this: any).setupSubscription = this.setupSubscription.bind (this);
 		(this: any).createSubscription = this.createSubscription.bind (this);
-		(this: any).receivePayload = this.receivePayload.bind (this);
+		(this: any).onReceivePayload = this.onReceivePayload.bind (this);
 	}
 
 	setEnvironment (environment: Environment) {
 		return this.subscriptionEnvironment = environment;
+	}
+
+	getClientId () {
+		return this.websocket ? this.websocket.id : null;
 	}
 
 	ensureConnection () {
@@ -85,7 +89,7 @@ export default class Subscriptions {
 		}
 
 		this.websocket = io ('/', this.webSocketSettings);
-		this.websocket.on ('message', this.receivePayload);
+		this.websocket.on ('message', this.onReceivePayload);
 
 		this.websocket.on ('disconnect', () => {
 			this.reconnecting = true;
@@ -101,11 +105,13 @@ export default class Subscriptions {
 		});
 	}
 
-	getClientId () {
-		return this.websocket ? this.websocket.id : null;
+	resubscribe () {
+		for (let [, {data}] of this.subscriptions) {
+			this.websocket.send ({type: 'SUBSCRIBE', data});
+		}
 	}
 
-	receivePayload ({data, subscriptionId}: ServerResponse) {
+	onReceivePayload ({data, subscriptionId}: ServerResponse) {
 		const {observer} = this.subscriptions.get (subscriptionId) || {};
 
 		if (observer && observer.onNext) {
@@ -154,11 +160,5 @@ export default class Subscriptions {
 
 		this.websocket.send ({type: 'SUBSCRIBE', data});
 		this.subscriptions.set (subscriptionId, {observer, data});
-	}
-
-	resubscribe () {
-		for (let [, {data}] of this.subscriptions) {
-			this.websocket.send ({type: 'SUBSCRIBE', data});
-		}
 	}
 }
