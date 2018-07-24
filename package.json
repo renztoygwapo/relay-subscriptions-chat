@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "yarn run build:production",
     "build": "yarn run build:relay && yarn run build:client && yarn run build:server",
-    "build:production": "BABEL_DISABLE_CACHE=1 yarn run lint && yarn run build:client:production && yarn run build:server:production",
+    "build:production": "yarn run lint && yarn run build:client:production && yarn run build:server:production",
     "build:client": "NODE_ENV=development webpack --progress --config scripts/webpack/client.js -d",
     "build:server": "NODE_ENV=development babel -d build/server src/server",
     "build:relay": "relay-compiler --src ./src --schema ./data/schema.graphql",
@@ -62,7 +62,6 @@
     "babel-plugin-react-transform": "^3.0.0",
     "babel-plugin-relay": "^1.6.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",

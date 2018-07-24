@@ -1,7 +1,7 @@
 // @flow
 
-import 'regenerator-runtime/runtime';
 import 'isomorphic-fetch';
+import 'regenerator-runtime/runtime';
 
 import path from 'path';
 import config from 'config';
