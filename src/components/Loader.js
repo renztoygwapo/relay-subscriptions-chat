@@ -5,5 +5,5 @@ import React from 'react';
 
 export default () =>
 	<div className="loader text-center p-3">
-		<span/>
+		<i className="fa fa-spinner fa-spin"/>
 	</div>
