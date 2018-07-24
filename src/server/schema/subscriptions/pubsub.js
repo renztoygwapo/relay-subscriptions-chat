@@ -1,52 +1,54 @@
 // @flow
 
-import type {Client} from './socket';
-import type {SubscriptionData} from './store/subscriptions';
-import type {default as Store} from './store';
-
-type PublishContext = {
-	headers?: {[key: string]: ?string}
+type CallbacksMap = {
+	[key: string]: Array <Function>
 };
 
-export default class SubscriptionsPubSub {
+interface iPubSub {
+	_callbacks: CallbacksMap,
 
-	store: Store;
+	publish (name: string, ...data: Array <any>): any,
 
-	constructor (store: Store) {
-		this.store = store;
+	subscribe (name: string, cb: Function): any,
+	unsubscribe (name: string, cb: Function): any
+}
+
+export default class PubSub implements iPubSub {
+
+	_callbacks: CallbacksMap;
+
+	constructor () {
+		this._callbacks = {};
 	}
 
-	registerClient (client: Client) {
-		this.store.registerClient (client);
+	subscribe (name: string, cb: Function) {
+		if (!this._callbacks [name]) {
+			this._callbacks [name] = [cb];
+		} else {
+			this._callbacks [name].push (cb);
+		}
 	}
 
-	unregisterClient (client: Client) {
-		this.store.unregisterClient (client);
+	unsubscribe (name: string, cb: Function) {
+		const callbacks = this._callbacks [name];
+
+		if (callbacks && callbacks.length) {
+			const index = this._callbacks [name].indexOf (cb);
+
+			if (index !== -1) {
+				this._callbacks [name].splice (index, 1);
+			}
+		}
 	}
 
-	subscribe (client: Client, data: SubscriptionData) {
-		this.store.registerSubscription (client, data);
+	publish (name: string, ...data: Array <any>) {
+		const callbacks = this._callbacks [name];
+
+		if (callbacks && callbacks.length) {
+			callbacks.forEach (
+				(cb) => typeof cb === 'function' && cb (...data)
+			);
+		}
 	}
 
-	unsubscribe (client: Client, data: SubscriptionData) {
-		this.store.unregisterSubscription (client, data);
-	}
-
-	async publish (
-		subscriptionName: string,
-		resolvers: Object,
-		context?: PublishContext
-	) {
-		const initiatorId: string = (
-			context &&
-			context.headers &&
-			context.headers ['x-ws-client-id']
-		) || 'server-event';
-
-		const queryBuilder = (data) => ({...data, context, resolvers});
-
-		console.log (`* triggered subscription ${subscriptionName} by ${initiatorId}`);
-
-		this.store.broadcast (subscriptionName, initiatorId, queryBuilder);
-	}
 }

@@ -3,12 +3,13 @@
 import socketIO from 'socket.io';
 
 import {passportMiddleware} from 'server/session';
-import SubscriptionSocket from 'server/schema/subscriptions/socket';
+import createSubscriptionSocket from './socket/subscription';
+import createUserSocket from './socket/user';
 
 import type {Server} from 'http';
 import type {Middleware} from 'express';
 import type {ServerOptions} from 'socket.io';
-import type {Client, SocketContext} from 'server/schema/subscriptions/socket';
+import type {Client, SocketContext} from './socket/authenticated';
 
 
 const serverOptions = ({
@@ -20,9 +21,10 @@ const serverOptions = ({
 export default (server: Server, sessionMiddleware: Middleware) => {
 	const io = socketIO (server, serverOptions);
 
-	io.on ('connection', (client: Client) =>
-		new SubscriptionSocket (client)
-	);
+	io.on ('connection', (client: Client) => {
+		createUserSocket (client);
+		createSubscriptionSocket (client);
+	});
 
 	return io
 		.use (({request}: SocketContext, next) =>

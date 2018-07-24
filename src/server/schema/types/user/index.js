@@ -10,7 +10,7 @@ import stats from 'server/schema/types/stats';
 import connection from 'server/schema/connection';
 import Message, {messageConnection} from 'server/schema/types/message';
 
-import subscriptions from 'server/schema/subscriptions';
+import {pubsub} from 'server/schema/subscriptions';
 
 import type {ConnectionArguments} from 'graphql-relay';
 import type {UserMongooseDoc} from 'server/models/user';
@@ -62,10 +62,9 @@ export default class User extends Model {
 			}
 		};
 
-		subscriptions.publish (
-			'UserAddedSubscription',
-			{userAdded}
-		);
+		pubsub.publish ('UserAddedSubscription', {
+			resolvers: {userAdded}
+		});
 
 		return node;
 	}
@@ -77,14 +76,11 @@ export default class User extends Model {
 		if (before !== online) {
 			await model.set ('online', online).save ();
 
-			const userUpdated = {
-				user: new User (model)
-			};
+			const userUpdated = {user: new User (model)};
 
-			subscriptions.publish (
-				'UserUpdatedSubscription',
-				{userUpdated}
-			);
+			pubsub.publish ('UserUpdatedSubscription', {
+				resolvers: {userUpdated}
+			});
 		}
 	}
 

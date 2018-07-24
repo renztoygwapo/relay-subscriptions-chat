@@ -6,7 +6,7 @@ import User from 'server/schema/types/user';
 import Message from 'server/schema/types/message';
 import stats from 'server/schema/types/stats';
 
-import subscriptions from 'server/schema/subscriptions';
+import {pubsub} from 'server/schema/subscriptions';
 
 
 type MessageAddInput = {
@@ -48,11 +48,10 @@ export default {
 			}
 		};
 
-		subscriptions.publish (
-			'MessageAddedSubscription',
-			{messageAdded},
+		pubsub.publish ('MessageAddedSubscription', {
+			resolvers: {messageAdded},
 			context
-		);
+		});
 
 		return {...messageAdded, clientMutationId};
 	},
@@ -69,11 +68,10 @@ export default {
 			removedMessageId: messageId
 		};
 
-		subscriptions.publish (
-			'MessageRemovedSubscription',
-			{messageRemoved},
+		pubsub.publish ('MessageRemovedSubscription', {
+			resolvers: {messageRemoved},
 			context
-		);
+		});
 
 		return {...messageRemoved, clientMutationId};
 	},
@@ -86,11 +84,10 @@ export default {
 			message: await Message.updateMessage ({messageId, text, userId: user.id})
 		};
 
-		subscriptions.publish (
-			'MessageUpdatedSubscription',
-			{messageUpdated},
+		pubsub.publish ('MessageUpdatedSubscription', {
+			resolvers: {messageUpdated},
 			context
-		);
+		});
 
 		return {...messageUpdated, clientMutationId};
 	}

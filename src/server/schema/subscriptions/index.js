@@ -2,12 +2,26 @@
 
 import User from 'server/schema/types/user';
 
-import Store from './store';
-import Pubsub from './pubsub';
+import PubSub from './pubsub';
+import UsersRegistry from './registry/users';
+import SubscriptionsRegistry from './registry/subscriptions';
+
 
 import type {PassportUser} from 'server/session/passport';
 
-const store = new Store ({
+export type SubscriptionId = string;
+export type SubscriptionName = string;
+export type SubscriptionData = {
+	query: string,
+	variables: Object,
+	subscriptionId: SubscriptionId,
+	subscriptionName: SubscriptionName
+};
+
+
+export const pubsub = new PubSub ();
+
+export const users = new UsersRegistry ({
 	onUserConnect: async ({id, name}: PassportUser) => {
 		await User.updateOnlineStatus (id, true);
 
@@ -20,4 +34,4 @@ const store = new Store ({
 	}
 });
 
-export default new Pubsub (store);
+export const subscriptions = new SubscriptionsRegistry (pubsub);
