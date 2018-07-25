@@ -8,9 +8,8 @@ import {createBrowserHistory} from 'history';
 import Routes from './routes';
 import environment from 'components/environment';
 
+
 export default () =>
 	<Router history={createBrowserHistory ()}>
-		<Router history={createBrowserHistory ()}>
-			<Routes environment={environment}/>
-		</Router>
+		<Routes environment={environment}/>
 	</Router>
